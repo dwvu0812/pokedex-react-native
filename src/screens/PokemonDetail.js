@@ -65,6 +65,7 @@ const getEvolutionChain = (data) => {
 
 export default function PokemonDetail({navigation, route}) {
   const {item} = route?.params;
+
   const imageSource = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${item.id}.png`;
 
   const [selection, setSelection] = useState(1);
@@ -72,11 +73,7 @@ export default function PokemonDetail({navigation, route}) {
   // const [detail, setDetail] = useState([]);
   const dispatch = useDispatch();
   const detail = useSelector(state => state.pokemonDetail.detail);
-  let loading = useSelector(state => state.pokemonDetail.loading);
-
-  // if (loading) {
-  //   <ActivityIndicator size="large" />;
-  // }
+  
 
   useEffect(() => {
     dispatch(getDetail());
@@ -200,12 +197,13 @@ export default function PokemonDetail({navigation, route}) {
   //     loadPokemon(item.name);
   //     console.log(item.name)
   //   }, []);
+  // console.log(detail.types)
 
   return (
     <ScrollView style={styles.container}>
       <View
         style={{
-          backgroundColor: backgroundColors[item.types[0].type.name],
+          backgroundColor: backgroundColors[item.types? item.types[0].type.name: 'grass'],
         }}>
         {/* <ImageBackground resizeMode="contain" source={Pokeball_card}> */}
           <Text
@@ -228,8 +226,11 @@ export default function PokemonDetail({navigation, route}) {
                 {item.name[0].toUpperCase() + item.name.slice(1)}
               </Text>
               <View style={[commonStyles.row, {marginTop: 5}]}>
-                <Tag type={item.types[0]?.type.name} />
-                {item.types[1]?.type.name && (
+                {/* <Tag type={item.types[0]?.type.name} /> */}
+                {item.types && (
+                  <Tag type={item.types[0].type.name} />
+                )}
+                {item.types && item.types[1] && (
                   <Tag type={item.types[1].type.name} />
                 )}
               </View>

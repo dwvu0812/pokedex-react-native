@@ -11,7 +11,7 @@ import ItemContent from '../../components/ItemContent';
 
 
 export default function About({aboutDetail}) {
-  // fetch('https://pokeapi.co/api/v2/evolution-chain/1/')
+  // fetch('https://pokeapi.co/api/v2/pokemon-species/92')
   // .then(res => res.json())
   // .then(data => console.log(data))
   

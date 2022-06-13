@@ -5,6 +5,8 @@ import Pokeball from '../../assets/Images/Pokeball_header.png';
 const Pokemon = ({data}) => {
   const source = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`;
 
+  // console.log(data.name)
+
   return (
     <View style={styles.itemContainer}>
       <ImageBackground
@@ -41,32 +43,48 @@ export default function Evolution({evolutionDetail}) {
             source={require('../../assets/Images/arrow.png')}
             style={{height: 30, width: 30}}
           />
-          <Text style={{color: '#000', fontSize: 14, fontWeight: '500', marginTop: 10}}>
+          <Text
+            style={{
+              color: '#000',
+              fontSize: 14,
+              fontWeight: '500',
+              marginTop: 10,
+            }}>
             {'Level ' + evolutionDetail.pokeEvolutionChain[1].min_level}
           </Text>
         </View>
         <Pokemon data={evolutionDetail.pokeEvolutionChain[1]} />
       </View>
-      {Object.keys(evolutionDetail.pokeEvolutionChain[2]) !== 0 && 
+      {/* {console.log(Object.keys(evolutionDetail.pokeEvolutionChain[2]).length)} */}
+      {Object.keys(evolutionDetail.pokeEvolutionChain[2]).length !== 0 && (
         <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginTop: 20,
-        }}>
-        <Pokemon data={evolutionDetail.pokeEvolutionChain[1]} />
-        <View style={{alignItems: 'center'}}>
-          <Image
-            source={require('../../assets/Images/arrow.png')}
-            style={{height: 30, width: 30}}
-          />
-          <Text style={{color: '#000', fontSize: 14, fontWeight: '500', marginTop: 10}}>
-            {'Level ' + evolutionDetail.pokeEvolutionChain[2].min_level}
-          </Text>
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: 20,
+          }}>
+          <Pokemon data={evolutionDetail.pokeEvolutionChain[1]} />
+          <View style={{alignItems: 'center'}}>
+            <Image
+              source={require('../../assets/Images/arrow.png')}
+              style={{height: 30, width: 30}}
+            />
+            <Text
+              style={{
+                color: '#000',
+                fontSize: 14,
+                fontWeight: '500',
+                marginTop: 10,
+              }}>
+              {evolutionDetail.pokeEvolutionChain[2].min_level !== null
+                ? 'Level ' + evolutionDetail.pokeEvolutionChain[2].min_level
+                : 'Level ' + evolutionDetail.pokeEvolutionChain[1].id}
+            </Text>
+          </View>
+          <Pokemon data={evolutionDetail.pokeEvolutionChain[2]} />
         </View>
-        <Pokemon data={evolutionDetail.pokeEvolutionChain[2]} />
-      </View>}
+      )}
     </View>
   );
 }

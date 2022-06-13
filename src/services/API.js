@@ -1,6 +1,9 @@
 import api from './AxiosConfig';
 
 class APIService {
+    getAllPokemons() {
+        return api.get(`/pokemon?limit=1000000`);
+    }
     getPokemons(limit) {
         return api.get(`/pokemon?limit=${limit}`);
     }

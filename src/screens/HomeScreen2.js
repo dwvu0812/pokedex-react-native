@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Button,
+  Image,
 } from 'react-native';
 import Pokeball_header from '../assets/Images/Pokeball_header.png';
 import {height} from '../assets/constants';
@@ -37,7 +38,9 @@ let pokemonOrigin = [];
 const offset = 20;
 let limit = 20;
 
-export default function HomeScreen2({navigation}) {
+export default function HomeScreen2({navigation, route}) {
+  const source = route.params?.source;
+
   const [textSearch, setTextSearch] = useState('');
   const [listLocal, setListLocal] = useState([]);
   // const [loading, setLoading] = useState(false);
@@ -110,17 +113,17 @@ export default function HomeScreen2({navigation}) {
   };
 
   //   console.log(pokemons);
-  useEffect(() => {
-    dispatch(getPokemons());
-    if (textSearch) {
-      const list = pokemonOrigin.filter(p =>
-        p.name.toLowerCase().includes(textSearch.toLowerCase()),
-      );
-      dispatch(getPokemonsSuccess(list));
-    } else {
-      dispatch(getPokemonsSuccess(pokemonOrigin));
-    }
-  }, [textSearch]);
+  // useEffect(() => {
+  //   dispatch(getPokemons());
+  //   if (textSearch) {
+  //     const list = pokemonOrigin.filter(p =>
+  //       p.name.toLowerCase().includes(textSearch.toLowerCase()),
+  //     );
+  //     dispatch(getPokemonsSuccess(list));
+  //   } else {
+  //     dispatch(getPokemonsSuccess(pokemonOrigin));
+  //   }
+  // }, [textSearch]);
 
   useEffect(() => {
     dispatch(getPokemons());
@@ -145,8 +148,10 @@ export default function HomeScreen2({navigation}) {
     }
   }, [sortValue]);
 
-  // let list = pokemons.slice().sort((a, b) => a.name.localeCompare(b.name));
-  // console.log(list)
+  console.log(1)
+  // console.log(pokemonOrigin)
+  console.log(pokemons)
+
 
   return (
     <>
@@ -157,79 +162,103 @@ export default function HomeScreen2({navigation}) {
         <View style={commonStyles.container}>
           <View
             style={{
-              ...commonStyles.row,
-              justifyContent: 'flex-end',
-              // marginVertical: 20,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}>
-            <TouchableOpacity onPress={() => setModalVisible(!isModalVisible)}>
-              <Sort color={textColor.black} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ImagePicker')}>
+              {source == undefined ? (
+                <Image
+                  style={{width: 25, height: 25, borderRadius: 25}}
+                  source={require('../assets/Images/types/flying.png')}
+                />
+              ) : (
+                <Image
+                  style={{width: 25, height: 25, borderRadius: 25}}
+                  source={source}
+                />
+              )}
             </TouchableOpacity>
-            <Icon>
-              <Generation color={textColor.black} />
-            </Icon>
-            <Icon>
-              <Filter color={textColor.black} />
-            </Icon>
+            <View
+              style={{
+                ...commonStyles.row,
+                justifyContent: 'flex-end',
+                // marginVertical: 20,
+              }}>
+              <TouchableOpacity
+                onPress={() => setModalVisible(!isModalVisible)}>
+                <Sort color={textColor.black} />
+              </TouchableOpacity>
+              <Icon>
+                <Generation color={textColor.black} />
+              </Icon>
+              <Icon>
+                <Filter color={textColor.black} />
+              </Icon>
 
-            <Modal isVisible={isModalVisible}>
-              <View
-                style={{
-                  backgroundColor: '#fff',
-                  padding: 30,
-                  borderRadius: 20,
-                }}>
-                <Text style={{color: '#000', fontSize: 20, fontWeight: '700'}}>
-                  Sort
-                </Text>
-                <Text
+              <Modal isVisible={isModalVisible}>
+                <View
                   style={{
-                    color: '#999',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    marginVertical: 10,
+                    backgroundColor: '#fff',
+                    padding: 30,
+                    borderRadius: 20,
                   }}>
-                  Sort Pokémons alphabetically or by National Pokédex number!
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setSortValue(1);
-                    setModalVisible(!isModalVisible);
-                  }}
-                  style={styles.sortItem}>
-                  <Text style={{color: '#000'}}>Smallest number first</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setSortValue(2);
-                    setModalVisible(!isModalVisible);
-                  }}
-                  style={styles.sortItem}>
-                  <Text style={{color: '#000'}}>Highest number first</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setSortValue(3);
-                    setModalVisible(!isModalVisible);
-                  }}
-                  style={styles.sortItem}>
-                  <Text style={{color: '#000'}}>A-Z</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setSortValue(4);
-                    setModalVisible(!isModalVisible);
-                  }}
-                  style={styles.sortItem}>
-                  <Text style={{color: '#000'}}>Z-A</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setModalVisible(!isModalVisible)}
-                  style={{alignItems: 'center'}}>
-                  <Text style={styles.textCloseModal}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </Modal>
+                  <Text
+                    style={{color: '#000', fontSize: 20, fontWeight: '700'}}>
+                    Sort
+                  </Text>
+                  <Text
+                    style={{
+                      color: '#999',
+                      fontSize: 14,
+                      fontWeight: '500',
+                      marginVertical: 10,
+                    }}>
+                    Sort Pokémons alphabetically or by National Pokédex number!
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSortValue(1);
+                      setModalVisible(!isModalVisible);
+                    }}
+                    style={styles.sortItem}>
+                    <Text style={{color: '#000'}}>Smallest number first</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSortValue(2);
+                      setModalVisible(!isModalVisible);
+                    }}
+                    style={styles.sortItem}>
+                    <Text style={{color: '#000'}}>Highest number first</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSortValue(3);
+                      setModalVisible(!isModalVisible);
+                    }}
+                    style={styles.sortItem}>
+                    <Text style={{color: '#000'}}>A-Z</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSortValue(4);
+                      setModalVisible(!isModalVisible);
+                    }}
+                    style={styles.sortItem}>
+                    <Text style={{color: '#000'}}>Z-A</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(!isModalVisible)}
+                    style={{alignItems: 'center'}}>
+                    <Text style={styles.textCloseModal}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
+            </View>
           </View>
+
           <Text style={commonStyles.heading}>Pokedex</Text>
           <Text style={commonStyles.subHeading}>
             Search for Pokémon by name or using the National Pokédex number.
@@ -244,6 +273,7 @@ export default function HomeScreen2({navigation}) {
               placeholder="What Pokémon are you looking for?"
               value={textSearch}
               onChangeText={setTextSearch}
+              onFocus={() => navigation.navigate('SearchScreen')}
             />
           </View>
           {/* <View style={{width: '100%', marginBottom: 50}}>
