@@ -48,7 +48,7 @@ export default function SearchScreen({navigation}) {
   useEffect(() => {
     if (textSearch) {
       const list = listOrigin.filter(item => {
-        return item.name.toLowerCase().includes(textSearch.toLowerCase());
+        return item.name.toLowerCase().includes(textSearch.toLowerCase()) || item.url.includes(textSearch.toLowerCase());
       });
       setData(list);
     } else {

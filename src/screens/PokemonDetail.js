@@ -79,7 +79,7 @@ export default function PokemonDetail({navigation, route}) {
     dispatch(getDetail());
     loadPokemon(item.name);
     // load(item.name);
-  }, []);
+  }, [item]);
 
   
   const loadPokemon = async name => {
@@ -197,7 +197,7 @@ export default function PokemonDetail({navigation, route}) {
   //     loadPokemon(item.name);
   //     console.log(item.name)
   //   }, []);
-  // console.log(detail.types)
+  // console.log(detail)
 
   return (
     <ScrollView style={styles.container}>

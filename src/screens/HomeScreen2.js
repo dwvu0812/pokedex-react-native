@@ -33,6 +33,7 @@ import {
 } from '../redux/pokemonSlice';
 import Modal from 'react-native-modal';
 import {Swipeable} from 'react-native-gesture-handler';
+import FilterScreen from '../screens/FilterScreen';
 
 let pokemonOrigin = [];
 const offset = 20;
@@ -41,27 +42,26 @@ let limit = 20;
 export default function HomeScreen2({navigation, route}) {
   const source = route.params?.source;
 
+  const pokemons = useSelector(state => state.pokemons.pokemons);
+  const filterValue  = useSelector(state => state.filter.filter);
+  // console.log(filterValue)
+
   const [textSearch, setTextSearch] = useState('');
   const [listLocal, setListLocal] = useState([]);
   // const [loading, setLoading] = useState(false);
   // const [pokemons, setPokemons] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible2, setModalVisible2] = useState(false);
   const [sortValue, setSortValue] = useState(1);
 
   const dispatch = useDispatch();
-  const pokemons = useSelector(state => state.pokemons.pokemons);
   let loading = useSelector(state => state.pokemons.loading);
-  // const loading = true;
 
-  useEffect(() => {
-    // setLoading(true);
-    dispatch(getPokemons());
-
-    // console.log(loading);
-
+  const loadListLocal = () => {
     AsyncStorage.getItem('pokedex_pokemon')
       .then(value => {
         if (value) {
+          // console.log(JSON.parse(value))
           setListLocal(JSON.parse(value));
         }
       })
@@ -83,8 +83,19 @@ export default function HomeScreen2({navigation, route}) {
       dispatch(getPokemonsSuccess(tempList));
     } else {
       const tempList2 = listLocal.slice(0, limit);
+
       dispatch(getPokemonsSuccess(tempList2));
+      // console.log(3);
     }
+  };
+
+  useEffect(() => {
+    // setLoading(true);
+    dispatch(getPokemons());
+
+    // console.log(loading);
+
+    loadListLocal();
 
     // setLoading(false);
   }, []);
@@ -92,11 +103,14 @@ export default function HomeScreen2({navigation, route}) {
   const LoadPokemons = async () => {
     if (textSearch == '') {
       let pokeList = await APIService.getPokemons(limit);
+      // console.log(pokeList);
       let all = [];
       for (let i = 0; i < pokeList.results.length; i++) {
         let pokeDetail = await APIService.getPokemonDetail(
           pokeList.results[i].name,
         );
+        // console.log(i);
+
         let Obj = {
           name: pokeDetail.name,
           id: pokeDetail.id,
@@ -104,11 +118,14 @@ export default function HomeScreen2({navigation, route}) {
           image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeDetail.id}.png`,
         };
         all.push(Obj);
+        // console.log(all)
       }
       limit += offset;
       SavePokemon(all);
+      // console.log(all);
       pokemonOrigin = all;
       dispatch(getPokemonsSuccess(all));
+      // console.log('exit');
     }
   };
 
@@ -148,10 +165,23 @@ export default function HomeScreen2({navigation, route}) {
     }
   }, [sortValue]);
 
-  console.log(1)
-  // console.log(pokemonOrigin)
-  console.log(pokemons)
+  useEffect(() => {
+    dispatch(getPokemons());
+    filterPokemons(filterValue);
+  }, [filterValue]);
 
+  const filterPokemons = filterValue => {
+    if (filterValue == 'all') {
+      dispatch(getPokemonsSuccess(pokemonOrigin));
+    } else {
+      let list = pokemonOrigin
+        .slice()
+        .filter(p => p.types[0].type.name == filterValue);
+      dispatch(getPokemonsSuccess(list));
+    }
+  };
+
+  // console.log(filterValue)
 
   return (
     <>
@@ -190,9 +220,11 @@ export default function HomeScreen2({navigation, route}) {
                 onPress={() => setModalVisible(!isModalVisible)}>
                 <Sort color={textColor.black} />
               </TouchableOpacity>
-              <Icon>
+              <TouchableOpacity
+                style={{marginLeft: 10}}
+                onPress={() => setModalVisible2(!isModalVisible2)}>
                 <Generation color={textColor.black} />
-              </Icon>
+              </TouchableOpacity>
               <Icon>
                 <Filter color={textColor.black} />
               </Icon>
@@ -256,6 +288,37 @@ export default function HomeScreen2({navigation, route}) {
                   </TouchableOpacity>
                 </View>
               </Modal>
+              <Modal isVisible={isModalVisible2}>
+                <View
+                  style={{
+                    backgroundColor: '#fff',
+                    padding: 30,
+                    borderRadius: 20,
+                  }}>
+                  <Text
+                    style={{color: '#000', fontSize: 20, fontWeight: '700'}}>
+                    Filter
+                  </Text>
+                  <Text
+                    style={{
+                      color: '#999',
+                      fontSize: 14,
+                      fontWeight: '500',
+                      marginVertical: 10,
+                    }}>
+                    Use advanced search to explore Pokémon by type!
+                  </Text>
+                
+                    {/* <Text style={{color: '#000'}}>Smallest number first</Text> */}
+                    <FilterScreen />
+
+                  <TouchableOpacity
+                    onPress={() => setModalVisible2(!isModalVisible2)}
+                    style={{alignItems: 'center'}}>
+                    <Text style={styles.textCloseModal}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
             </View>
           </View>
 
@@ -290,7 +353,10 @@ export default function HomeScreen2({navigation, route}) {
         }}>
         <FlatList
           refreshing={loading}
-          onRefresh={LoadPokemons}
+          onRefresh={() => {
+            loadListLocal();
+            LoadPokemons();
+          }}
           data={pokemons}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
