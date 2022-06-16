@@ -3,6 +3,7 @@ import React from 'react';
 import {textColor} from './src/assets/colors';
 import HomeScreen2 from './src/screens/HomeScreen2';
 import SearchScreen from './src/screens/SearchScreen';
+import Animation from './src/screens/Animation';
 import store from './src/redux/store';
 import {Provider} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
@@ -21,6 +22,7 @@ export default function App() {
       </View> */}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
+          {/* <Stack.Screen name="Animation" component={Animation} /> */}
           <Stack.Screen name="Home" component={HomeScreen2} />
           <Stack.Screen name="ImagePicker" component={ImagePicker} />
           <Stack.Screen name="SearchScreen" component={SearchScreen} />
